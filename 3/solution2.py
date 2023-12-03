@@ -6,6 +6,7 @@ from functools import reduce
 
 
 def solve(lines: list[str]) -> None:
+    numbers = []
     coords_to_numbers = {}
     
     gears = []
@@ -31,8 +32,9 @@ def solve(lines: list[str]) -> None:
                 
                 # remember cur part number coords
                 if cur_number and cur_cnt > 0:
+                    numbers.append(int(cur_number))
                     for num_x in range(start_x, start_x + len(cur_number)):
-                        coords_to_numbers.setdefault(y, {})[num_x] = int(cur_number)
+                        coords_to_numbers.setdefault(y, {})[num_x] = len(numbers) - 1
 
                 cur_number = ''
                 cur_cnt = 0
@@ -40,7 +42,7 @@ def solve(lines: list[str]) -> None:
                 continue
             
             if not cur_number:
-                # remember of the number
+                # remember start of the number
                 start_x, start_y = x, y
 
             cur_number += c
@@ -55,25 +57,27 @@ def solve(lines: list[str]) -> None:
         # end of line case
         # remember cur part number coords
         if cur_number and cur_cnt > 0:
+            numbers.append(int(cur_number))
             for num_x in range(start_x, start_x + len(cur_number)):
-                coords_to_numbers.setdefault(y, {})[num_x] = int(cur_number)
+                coords_to_numbers.setdefault(y, {})[num_x] = len(numbers) - 1
 
         cur_number = ''
         cur_cnt = 0
         start_x, start_y = -1, -1
-    
+
     # check gears
     for gx, gy in gears:
         gear_nums = set()
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if 0 <= gy + i < h and 0 <= gx + j< w:
-                    num = coords_to_numbers.get(gy + i, {}).get(gx + j)
-                    if num:
-                        gear_nums.add(num)
-
+                    num_idx = coords_to_numbers.get(gy + i, {}).get(gx + j)
+                    if num_idx is not None:
+                        gear_nums.add(num_idx)
+            
         if len(gear_nums) == 2:
-            result += reduce(lambda x,y: x * y, gear_nums)
+            i1, i2 = gear_nums
+            result += numbers[i1] * numbers[i2]
 
     print(result)
 

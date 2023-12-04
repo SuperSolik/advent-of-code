@@ -3,7 +3,7 @@
 import fileinput
 
 
-def parse_card(line: str) -> int:
+def process_card(line: str) -> int:
     numbers = line.split(':')[1].strip()
     winning, have = numbers.split('|')
     winning = winning.split()
@@ -20,7 +20,7 @@ def parse_card(line: str) -> int:
 
 
 def solve(lines: list[str]) -> None:
-    print(sum(parse_card(line) for line in lines))
+    print(sum(process_card(line) for line in lines))
             
 
 if __name__ == '__main__':

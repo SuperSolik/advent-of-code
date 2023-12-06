@@ -18,8 +18,6 @@ def solve_race(t, d) -> int:
 
 
 def solve(lines: list[str]) -> None:
-    times = lines[0]
-
     times = [int(t) for t in lines[0].split()[1:]]
     distances = [int(d) for d in lines[1].split()[1:]]
 

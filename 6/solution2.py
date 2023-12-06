@@ -3,8 +3,6 @@
 import fileinput
 import math
 
-from functools import reduce
-
 
 def solve_race(t, d) -> int:
     # find roots of t * x - x * x - d = 0
@@ -18,8 +16,6 @@ def solve_race(t, d) -> int:
 
 
 def solve(lines: list[str]) -> None:
-    times = lines[0]
-
     race_time = int(''.join([t for t in lines[0].split()[1:]]))
     race_distance = int(''.join([d for d in lines[1].split()[1:]]))
 

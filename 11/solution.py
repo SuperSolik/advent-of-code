@@ -14,8 +14,6 @@ class Field:
 
 Coords = tuple[int, int]
 
-# pairs = [(i, j) for i in range(1, 10) for j in range(i+1, 10)]
-
 def expand(field: Field, expand_k: int = 1) -> Field:
     field.h = len(field.points)
     field.w = len(field.points[0])
@@ -52,7 +50,7 @@ def dijkstra(field: Field, start: Coords, targets: list[Coords]) -> dict[Coords,
     while q:
         d, (x, y) = heapq.heappop(q)
 
-        if all(c in dist for c in targets):
+        if all(t in dist for t in targets):
             break
 
         if d > dist.get((x, y), INF):

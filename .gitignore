@@ -161,3 +161,4 @@ cython_debug/
 # aoc inputs
 **/*.txt
 **/.DS_Store
+**/*answer*

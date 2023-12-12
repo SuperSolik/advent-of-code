@@ -6,4 +6,4 @@ def solve(lines: list[str]) -> None:
     
 
 if __name__ == '__main__':
-    solve([line for line in fileinput.input()])
+    solve([line.strip() for line in fileinput.input()])

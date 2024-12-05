@@ -32,15 +32,6 @@ func parseInput() []string {
 	return lines
 }
 
-func printSlice[T any](arr []T, newline bool) {
-	for _, v := range arr {
-		fmt.Printf("%v ", v)
-	}
-	if newline {
-		fmt.Println()
-	}
-}
-
 func main() {
 	lines := parseInput()
 
@@ -79,21 +70,13 @@ func main() {
 			}
 		}
 
-		// safe := 0
-
 		switch {
 		case max_diff > 3:
 		case neg == lineLen-1 || pos == lineLen-1:
-			// safe = 1
 			result += 1
 		default:
 			result += 0
 		}
-
-		// printSlice(numbers, false)
-		// fmt.Printf(" | ")
-		// printSlice(diff, false)
-		// fmt.Printf("| %d %d %d %d safe = %d\n", pos, neg, zeroes, max_diff, safe)
 	}
 
 	fmt.Printf("%d\n", result)

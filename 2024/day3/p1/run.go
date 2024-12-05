@@ -31,15 +31,6 @@ func parseInput() string {
 	return string(bytes)
 }
 
-func printSlice[T any](arr []T, newline bool) {
-	for _, v := range arr {
-		fmt.Printf("%v ", v)
-	}
-	if newline {
-		fmt.Println()
-	}
-}
-
 type Parser struct {
 	data    string
 	dataLen int

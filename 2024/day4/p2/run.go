@@ -30,15 +30,6 @@ func parseInput() []string {
 	return strings.Split(string(bytes), "\n")
 }
 
-// func printSlice[T any](arr []T, newline bool) {
-// 	for _, v := range arr {
-// 		fmt.Printf("%v ", v)
-// 	}
-// 	if newline {
-// 		fmt.Println()
-// 	}
-// }
-
 type Solution struct {
 	lines    []string
 	lineSize int

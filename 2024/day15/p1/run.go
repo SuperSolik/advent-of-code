@@ -37,14 +37,42 @@ type Vec2 struct {
 func (v *Vec2) plus(other Vec2) Vec2 {
 	return Vec2{x: v.x + other.x, y: v.y + other.y}
 }
+func (v *Vec2) neg() Vec2 {
+	return Vec2{x: -v.x, y: -v.y}
+}
 
 var DIRS = []Vec2{{-1, 0}, {1, 0}, {0, 1}, {0, -1}}
 
 type Solution struct {
-	grid   []string
-	w, h   int
-	sx, sy int
-	moves  []byte
+	grid  []string
+	w, h  int
+	pos   Vec2
+	moves []byte
+}
+
+func (s *Solution) PrintGrid() {
+	for y := 0; y < s.h; y++ {
+		for x := 0; x < s.w; x++ {
+			if x == s.pos.x && y == s.pos.y {
+				fmt.Printf("@")
+			} else {
+				fmt.Printf("%c", s.grid[y][x])
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func (s *Solution) CountGPSCoords() int {
+	res := 0
+	for y := 0; y < s.h; y++ {
+		for x := 0; x < s.w; x++ {
+			if s.grid[y][x] == 'O' {
+				res += y*100 + x
+			}
+		}
+	}
+	return res
 }
 
 func (s *Solution) InBounds(pos Vec2) bool {
@@ -71,27 +99,61 @@ func (s *Solution) DirFromMove(move byte) (Vec2, bool) {
 }
 
 func (s *Solution) EndOfGrid(pos Vec2) bool {
-	return !s.InBounds(pos) || s.At(pos) == '#'
+	if s.InBounds(pos) {
+		return s.At(pos) == '#'
+	}
+	return true
+}
+
+func strPut(data string, idx int, c byte) string {
+	row := []byte(data)
+	row[idx] = c
+	data = string(row)
+	return data
 }
 
 func (s *Solution) loop() {
-	pos := Vec2{s.sx, s.sy}
-	for _, move := range s.moves {
-		dir, ok := s.DirFromMove(move)
+	i := 0
+	for i < len(s.moves) {
+		dir, ok := s.DirFromMove(s.moves[i])
 		if !ok {
+			i++
 			continue
 		}
 
-		newPos := pos.plus(dir)
+		newPos := s.pos.plus(dir)
 
+		// NOTE: right next to a wall
 		if s.EndOfGrid(newPos) {
+			i++
 			continue
 		}
 
-		if s.grid[newPos.y][newPos.x] == '.' {
+		// NOTE: peek through boxes until either a wall or a free space
+		for !s.EndOfGrid(newPos) && s.grid[newPos.y][newPos.x] != '.' {
+			newPos = newPos.plus(dir)
 		}
 
-		// TODO: blocks ahead
+		// NOTE: wall after boxes, can't move
+		if s.EndOfGrid(newPos) {
+			i++
+			continue
+		}
+
+		// NOTE: free space after the boxes, move boxes from the end
+		backtrackPos := newPos.plus(dir.neg())
+		for backtrackPos != s.pos {
+			t := s.grid[backtrackPos.y][backtrackPos.x]
+			s.grid[backtrackPos.y] = strPut(s.grid[backtrackPos.y], backtrackPos.x, s.grid[newPos.y][newPos.x])
+			s.grid[newPos.y] = strPut(s.grid[newPos.y], newPos.x, t)
+
+			newPos = backtrackPos
+			backtrackPos = newPos.plus(dir.neg())
+		}
+
+		// NOTE: move player after the boxes are moved
+		s.pos = backtrackPos.plus(dir)
+		i++
 	}
 }
 
@@ -104,29 +166,30 @@ func main() {
 	sx, sy := -1, -1
 
 	for ; lines[i] != ""; i++ {
-		grid = append(grid, lines[i])
 		if rowIdx := strings.IndexByte(lines[i], '@'); rowIdx != -1 {
 			sx = rowIdx
 			sy = i
+			lines[i] = strPut(lines[i], rowIdx, '.')
 		}
+		grid = append(grid, lines[i])
 	}
 
 	i += 1
 
-	var moves []rune
+	var moves []byte
 	for ; i < len(lines); i++ {
-		moves = append(moves, []rune(lines[i])...)
+		moves = append(moves, []byte(lines[i])...)
 	}
 
-	fmt.Printf("%d %d\n", sx, sy)
+	s := Solution{grid, len(grid[0]), len(grid), Vec2{sx, sy}, moves}
 
-	for _, row := range grid {
-		fmt.Println(row)
-	}
+	s.PrintGrid()
 
-	fmt.Println("-----")
+	s.loop()
 
-	for _, c := range moves {
-		fmt.Printf("%c", c)
-	}
+	fmt.Println("---AFTER---")
+
+	s.PrintGrid()
+
+	fmt.Printf("%v\n", s.CountGPSCoords())
 }

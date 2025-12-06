@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import fileinput
 from typing import Iterable
 

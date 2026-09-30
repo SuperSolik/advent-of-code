@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 
 import fileinput
-from typing import Iterable
+from collections.abc import Iterable
 
 
 def solve1(lines: Iterable[str]) -> None:
-    pass
+    print(lines)
 
 
 def solve2(lines: Iterable[str]) -> None:
-    pass
+    print(lines)
 
 
 if __name__ == "__main__":
-    data = [line.strip() for line in fileinput.input()]
-    print("Part1: ", solve1(data))
-    print("Part2: ", solve2(data))
+    with fileinput.input(encoding="utf-8") as stdin:
+        lines = [line.strip() for line in stdin]
+
+    print("Part1: ", solve1(lines))
+    print("Part2: ", solve2(lines))
